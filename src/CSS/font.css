@@ -1,0 +1,157 @@
+/* Paperlogy */
+@font-face {
+  font-family: "Paperlogy-1Thin";
+  src: url("/public/assets/fonts/Paperlogy-1Thin.ttf") format("ttf");
+}
+
+@font-face {
+  font-family: "Paperlogy-2ExtraLight";
+  src: url("/public/assets/fonts/Paperlogy-2ExtraLight.ttf") format("ttf");
+}
+
+@font-face {
+  font-family: "Paperlogy-3Light";
+  src: url("/public/assets/fonts/Paperlogy-3Light.ttf") format("ttf");
+}
+
+@font-face {
+  font-family: "Paperlogy-4Regular";
+  src: url("/public/assets/fonts/Paperlogy-4Regular.ttf") format("ttf");
+}
+
+@font-face {
+  font-family: "Paperlogy-5Medium";
+  src: url("/public/assets/fonts/Paperlogy-5Medium.ttf") format("ttf");
+}
+
+@font-face {
+  font-family: "Paperlogy-6SemiBold";
+  src: url("/public/assets/fonts/Paperlogy-6SemiBold.ttf") format("ttf");
+}
+
+@font-face {
+  font-family: "Paperlogy-7Bold";
+  src: url("/public/assets/fonts/Paperlogy-7Bold.ttf") format("ttf");
+}
+
+@font-face {
+  font-family: "Paperlogy-8ExtraBold";
+  src: url("/public/assets/fonts/Paperlogy-8ExtraBold.ttf") format("ttf");
+}
+
+@font-face {
+  font-family: "Paperlogy-9Black";
+  src: url("/public/assets/fonts/Paperlogy-9Black.ttf") format("ttf");
+}
+
+/* Pretendard */
+@font-face {
+  font-family: "Pretendard-Black";
+  src: url("/public/assets/fonts/Pretendard-Black.otf") format("woff");
+}
+@font-face {
+  font-family: "Pretendard-ExtraBold";
+  src: url("/public/assets//fonts/Pretendard-ExtraBold.otf") format("woff");
+}
+@font-face {
+  font-family: "Pretendard-Bold";
+  src: url("/public/assets//fonts/Pretendard-Bold.otf") format("woff");
+}
+@font-face {
+  font-family: "Pretendard-SemiBold";
+  src: url("/public/assets//fonts/Pretendard-SemiBold.otf") format("woff");
+}
+@font-face {
+  font-family: "Pretendard-Medium";
+  src: url("/public/assets//fonts/Pretendard-Medium.otf") format("woff");
+}
+@font-face {
+  font-family: "Pretendard-Regular";
+  src: url("/public/assets//fonts/Pretendard-Regular.otf") format("woff");
+}
+@font-face {
+  font-family: "Pretendard-Light";
+  src: url("/public/assets//fonts/Pretendard-Light.otf") format("woff");
+}
+@font-face {
+  font-family: "Pretendard-ExtraLight";
+  src: url("/public/assets//fonts/Pretendard-ExtraLight.otf") format("woff");
+}
+@font-face {
+  font-family: "Pretendard-Thin";
+  src: url("/public/assets//fonts/Pretendard-Thin.otf") format("woff");
+}
+
+/* Paperlogy */
+.fontPLThin {
+  font-family: "Paperlogy-1Thin";
+}
+
+.fontPLEL {
+  font-family: "Paperlogy-2ExtraLight";
+}
+
+.fontPLLight {
+  font-family: "Paperlogy-3Light";
+}
+
+.fontPLRegular {
+  font-family: "Paperlogy-4Regular";
+}
+
+.fontPLMedium {
+  font-family: "Paperlogy-5Medium";
+}
+
+.fontPLSB {
+  font-family: "Paperlogy-6SemiBold";
+}
+
+.fontPLBold {
+  font-family: "Paperlogy-7Bold";
+}
+
+.fontPLEB {
+  font-family: "Paperlogy-8ExtraBold";
+}
+
+.fontPLBlack {
+  font-family: "Paperlogy-9Black";
+}
+
+/* Pretendard */
+.fontBlack {
+  font-family: "Pretendard-Black";
+}
+
+.fontEB {
+  font-family: "Pretendard-ExtraBold";
+}
+
+.fontBold {
+  font-family: "Pretendard-Bold";
+}
+
+.fontSB {
+  font-family: "Pretendard-SemiBold";
+}
+
+.fontMedium {
+  font-family: "Pretendard-Medium";
+}
+
+.fontRegular {
+  font-family: "Pretendard-Regular";
+}
+
+.fontLight {
+  font-family: "Pretendard-Light";
+}
+
+.fontEL {
+  font-family: "Pretendard-ExtraLight";
+}
+
+.fontThin {
+  font-family: "Pretendard-Thin";
+}
