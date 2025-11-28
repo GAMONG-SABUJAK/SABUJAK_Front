@@ -9,6 +9,8 @@ import DealMain from "./pages/nearbyStockDeals/DealMain";
 import DealDetail from "./pages/nearbyStockDeals/DealDetail";
 import Advertise from "./pages/Advertise/Advertise";
 import OutputText from "./pages/Advertise/OutputText";
+import ChatMain from "./pages/Chat/ChatMain";
+import StoreMain from "./pages/MyStore/StoreMain";
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
           <Route path="/deals/:id" element={<DealDetail />} />
           <Route path="/write" element={<Advertise />} />
           <Route path="/output" element={<OutputText />} />
+          <Route path="/chat" element={<ChatMain />} />
+          <Route path="/store" element={<StoreMain />} />
         </Routes>
         <Menu />
       </div>
