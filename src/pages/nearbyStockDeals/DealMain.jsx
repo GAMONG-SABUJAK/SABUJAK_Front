@@ -72,11 +72,11 @@ export default function DealMain() {
                 <div className="flex space-x-3 justify-end">
                   <div className="flex items-center">
                     <IoChatboxEllipsesOutline />
-                    <p className="ml-1">{item.chat}</p>
+                    <p className="ml-1">{item.chatCount}</p>
                   </div>
                   <div className="flex items-center">
                     <BsBookmark />
-                    <p className="ml-1">{item.bookmark}</p>
+                    <p className="ml-1">{item.bookmarkCount}</p>
                   </div>
                 </div>
               </div>
