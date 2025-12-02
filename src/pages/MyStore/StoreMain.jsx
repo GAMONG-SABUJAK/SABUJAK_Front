@@ -8,76 +8,72 @@ import SalesOverview from "./SalesOverview";
 export default function StoreMain() {
   const [weeklyWeather, setWeeklyWeather] = useState([]);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   const weatherStyles = {
-    Clear: {
-      icon: "🌤",
-      desc: "맑음",
-      bg: "bg-[#A9DEF3]",
-    },
-    Clouds: {
-      icon: "☁️",
-      desc: "흐림",
-      bg: "bg-[#E6E6E6]",
-    },
-    Rain: {
-      icon: "🌧️",
-      desc: "비",
-      bg: "bg-[#78A3D1]",
-    },
-    Drizzle: {
-      icon: "🌦️",
-      desc: "이슬비",
-      bg: "bg-[#A1BCDA]",
-    },
-    Thunderstorm: {
-      icon: "⛈️",
-      desc: "천둥/번개",
-      bg: "bg-[#8190B4]",
-    },
-    Snow: {
-      icon: "❄️",
-      desc: "눈",
-      bg: "bg-[#F9F9F9]",
-    },
-    Fog: {
-      icon: "🌫️",
-      desc: "안개",
-      bg: "bg-[#C1C1C1]",
-    },
-    Sand: {
-      icon: "🌪️",
-      desc: "황사",
-      bg: "bg-[#DFCFB5]",
-    },
+    Clear: { icon: "🌤", desc: "맑음", bg: "bg-[#A9DEF3]" },
+    Clouds: { icon: "☁️", desc: "흐림", bg: "bg-[#E6E6E6]" },
+    Rain: { icon: "🌧️", desc: "비", bg: "bg-[#78A3D1]" },
+    Drizzle: { icon: "🌦️", desc: "이슬비", bg: "bg-[#A1BCDA]" },
+    Thunderstorm: { icon: "⛈️", desc: "천둥/번개", bg: "bg-[#8190B4]" },
+    Snow: { icon: "❄️", desc: "눈", bg: "bg-[#F9F9F9]" },
+    Fog: { icon: "🌫️", desc: "안개", bg: "bg-[#C1C1C1]" },
+    Sand: { icon: "🌪️", desc: "황사", bg: "bg-[#DFCFB5]" },
+  };
+
+  // 위치정보 가져오기 (timeout 포함). 실패해도 reject 하지 않고 null 반환.
+  const getUserLocation = () => {
+    return new Promise((resolve) => {
+      if (!navigator.geolocation) {
+        resolve(null);
+        return;
+      }
+
+      const options = { timeout: 7000 };
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude });
+        },
+        () => {
+          // 권한 거부 또는 에러 -> null 반환 (fetchWeather에서 fallback 사용)
+          resolve(null);
+        },
+        options
+      );
+    });
   };
 
   const fetchWeather = async () => {
+    setLoading(true); // 반드시 true로 시작
     try {
-      const API_KEY = "4534c40ed1b6e89dcc4e813498a37cc4";
-      const lat = 37.3943;
-      const lon = 126.9568;
+      // 사용자 위치 시도
+      const pos = await getUserLocation();
 
+      // pos가 null이면 fallback 좌표 사용
+      const lat = pos && typeof pos.lat !== "undefined" ? pos.lat : 37.3943; // 평촌 기본
+      const lon = pos && typeof pos.lon !== "undefined" ? pos.lon : 126.9568;
+
+      const API_KEY = "4534c40ed1b6e89dcc4e813498a37cc4";
       const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=kr`;
 
       const res = await fetch(url);
       const data = await res.json();
 
-      if (!data.list) {
-        console.log("Weather API Error:", data);
+      if (!data || !data.list) {
+        console.log("Weather API 응답 이상:", data);
+        setWeeklyWeather([]); // 안전 처리
         return;
       }
 
       const dailyMap = {};
-
       data.list.forEach((item) => {
         const date = item.dt_txt.split(" ")[0];
-
         if (!dailyMap[date]) {
           dailyMap[date] = {
             min: item.main.temp_min,
             max: item.main.temp_max,
-            weather: item.weather[0].main, // 🌈 대표 날씨 저장!
+            weather: item.weather[0].main,
           };
         } else {
           dailyMap[date].min = Math.min(dailyMap[date].min, item.main.temp_min);
@@ -111,11 +107,15 @@ export default function StoreMain() {
       setWeeklyWeather(dailyArray);
     } catch (e) {
       console.log("날씨 데이터 불러오기 실패:", e);
+      setWeeklyWeather([]); // 실패 시 빈배열로 안전 처리
+    } finally {
+      setLoading(false); // 반드시 false로 종료
     }
   };
 
   useEffect(() => {
     fetchWeather();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -170,47 +170,66 @@ export default function StoreMain() {
             </div>
           </div>
 
-          {/* 날씨 카드 리스트 */}
-          <div className="mt-4 overflow-x-auto">
-            <div className="flex space-x-2 pb-2">
-              {weeklyWeather.map((day, index) => (
-                <div
-                  key={index}
-                  className={`min-w-[100px] h-fit p-2 rounded-xl shadow-md ${
-                    weatherStyles[day.weather]?.bg
-                  }`}
-                >
-                  <div className="flex justify-center items-end space-x-1">
-                    <p className="fontBold text-[15px] text-center">
-                      {day.date}
-                    </p>
-
-                    <p className="text-[12px] fontBold text-[#4E4E4E]">
-                      {day.desc}
-                    </p>
-                  </div>
-
-                  {/* 🌤 아이콘 + 설명 */}
-                  <div className="text-[60px] my-[-10px] flex justify-center">
-                    {day.icon}
-                  </div>
-
-                  <div className="text-[10px] fontBold text-[#4E4E4E] flex justify-center ">
-                    <p>{day.min}°C</p>
-                    <div className="mx-1">/</div>
-                    <p>{day.max}°C</p>
-                  </div>
-
-                  <div className="mt-1 text-[10px] flex justify-center">
-                    <span className="fontBold text-[#557BB4] mr-1">
-                      {day.sales > 0 ? `+${day.sales}%` : `${day.sales}%`}
-                    </span>
-                    매출예상
-                  </div>
-                </div>
-              ))}
+          {/* 로딩 UI: loading true일 때만 보임 (fetchWeather가 완료되면 사라짐) */}
+          {loading && (
+            <div className="mt-4 w-full h-[120px] bg-[#eef2f7] rounded-xl flex flex-col items-center justify-center">
+              <p className="text-[15px] fontMedium text-[#365482]">
+                날씨 정보를 불러오는 중입니다...
+              </p>
+              <div className="mt-3 w-5 h-5 border-2 border-[#365482] border-t-transparent rounded-full animate-spin"></div>
             </div>
-          </div>
+          )}
+
+          {/* 날씨 카드 리스트 (로딩 끝나면 보여줌) */}
+          {!loading && (
+            <div className="mt-4 overflow-x-auto">
+              <div className="flex space-x-2 pb-2">
+                {weeklyWeather.map((day, index) => (
+                  <div
+                    key={index}
+                    className={`min-w-[100px] h-fit p-2 rounded-xl shadow-md ${
+                      weatherStyles[day.weather]?.bg
+                    }`}
+                  >
+                    <div className="flex justify-center items-end space-x-1">
+                      <p className="fontBold text-[15px] text-center">
+                        {day.date}
+                      </p>
+
+                      <p className="text-[12px] fontBold text-[#4E4E4E]">
+                        {day.desc}
+                      </p>
+                    </div>
+
+                    {/* 🌤 아이콘 + 설명 */}
+                    <div className="text-[60px] my-[-10px] flex justify-center">
+                      {day.icon}
+                    </div>
+
+                    <div className="text-[10px] fontBold text-[#4E4E4E] flex justify-center ">
+                      <p>{day.min}°C</p>
+                      <div className="mx-1">/</div>
+                      <p>{day.max}°C</p>
+                    </div>
+
+                    <div className="mt-1 text-[10px] flex justify-center">
+                      <span className="fontBold text-[#557BB4] mr-1">
+                        {day.sales > 0 ? `+${day.sales}%` : `${day.sales}%`}
+                      </span>
+                      매출예상
+                    </div>
+                  </div>
+                ))}
+
+                {/* weeklyWeather가 빈 배열이라도 안내 문구 하나 보여주기 */}
+                {!weeklyWeather.length && (
+                  <div className="min-w-[200px] h-[120px] flex items-center justify-center text-sm text-gray-500">
+                    날씨 정보를 불러오지 못했습니다.
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* 내 가게 매출 현황 */}

@@ -65,7 +65,7 @@ export default function Advertise() {
   };
 
   return (
-    <div className="pt-12 h-screen overflow-y-auto">
+    <div className="pt-12 h-screen pb-28 overflow-y-auto">
       {/* header */}
       <div className="flex justify-between px-6">
         <div className="flex flex-col justify-center">
