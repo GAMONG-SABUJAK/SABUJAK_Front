@@ -1,21 +1,36 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { IoChevronBack } from "react-icons/io5";
-import { BsBookmark } from "react-icons/bs";
+import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { deals } from "../../data/deals";
 import { FiMapPin } from "react-icons/fi";
 import { IoChatboxEllipsesOutline } from "react-icons/io5";
 
+import { getBookmarks, toggleBookmark } from "../../utils/bookmark";
+
 export default function Bookmark() {
   const navigate = useNavigate();
+
+  const [bookmarkList, setBookmarkList] = useState(getBookmarks());
+
+  // 북마크 변경 시 UI 다시 불러오기
+  useEffect(() => {
+    const refresh = () => setBookmarkList(getBookmarks());
+    refresh();
+  }, []);
+
+  const filteredDeals = deals.filter((d) => bookmarkList.includes(d.id));
+
   const tagStyles = {
     나눔: "bg-[#E6ECF5] text-[#365482]",
     구해요: "bg-[#FFF6D8] text-[#A88600]",
     팔아요: "bg-[#FFE5EA] text-[#B33A4B]",
   };
+
   return (
-    <div className="pt-12 h-screen overflow-y-auto ">
-      <div className="flex items-center px-6 ">
+    <div className="pt-12 h-screen overflow-y-auto">
+      {/* 헤더 */}
+      <div className="flex items-center px-6">
         <IoChevronBack
           size={26}
           onClick={() => navigate(-1)}
@@ -29,10 +44,25 @@ export default function Bookmark() {
 
         <div className="w-6"></div>
       </div>
-      <div className="w-full h-[0.5px] bg-[#c4c4c4] mt-4 px-6">
-        {deals.map((item) => (
-          <div key={item.id} onClick={() => navigate(`/deals/${item.id}`)}>
-            <div className="flex py-4">
+
+      {/* 구분선 */}
+      <div className="w-full h-[0.5px] bg-[#c4c4c4] mt-4"></div>
+
+      <div className="px-6">
+        {/* 북마크 없으면 */}
+        {filteredDeals.length === 0 && (
+          <div className="text-center mt-10 text-[#777]">
+            <p>북마크한 상품이 없습니다.</p>
+          </div>
+        )}
+
+        {/* 북마크된 아이템 목록 */}
+        {filteredDeals.map((item) => (
+          <div key={item.id}>
+            <div
+              className="flex py-4 cursor-pointer"
+              onClick={() => navigate(`/deals/${item.id}`)}
+            >
               <img
                 src={item.img}
                 alt=""
@@ -67,13 +97,26 @@ export default function Bookmark() {
                   </div>
                 </div>
 
-                <div className="flex space-x-3 justify-end">
+                {/* 채팅 수 + 북마크 수 */}
+                <div className="flex space-x-3 justify-end mt-2">
                   <div className="flex items-center">
                     <IoChatboxEllipsesOutline />
                     <p className="ml-1">{item.chatCount}</p>
                   </div>
-                  <div className="flex items-center">
-                    <BsBookmark />
+
+                  {/* 북마크 토글 */}
+                  <div
+                    className="flex items-center cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setBookmarkList(toggleBookmark(item.id)); // UI 즉시 반영
+                    }}
+                  >
+                    {bookmarkList.includes(item.id) ? (
+                      <BsBookmarkFill />
+                    ) : (
+                      <BsBookmark />
+                    )}
                     <p className="ml-1">{item.bookmarkCount}</p>
                   </div>
                 </div>

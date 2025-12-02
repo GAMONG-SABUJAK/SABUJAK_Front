@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { deals } from "../../data/deals";
 import { FiMapPin } from "react-icons/fi";
 import { IoChatboxEllipsesOutline } from "react-icons/io5";
-import { BsBookmark } from "react-icons/bs";
+import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
+import { getBookmarks, toggleBookmark } from "../../utils/bookmark";
 import { IoChevronBack } from "react-icons/io5";
 import { GoHome, GoHomeFill } from "react-icons/go";
 
@@ -15,6 +16,7 @@ export default function DealDetail() {
     구해요: "bg-[#FFF6D8] text-[#A88600]",
     팔아요: "bg-[#FFE5EA] text-[#B33A4B]",
   };
+  const [bookmarks, setBookmarks] = useState(getBookmarks());
 
   const item = deals.find((deal) => deal.id === Number(id));
 
@@ -66,7 +68,19 @@ export default function DealDetail() {
 
         <div className="mt-6 flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <BsBookmark size={28} />
+            <div
+              className="cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                setBookmarks(toggleBookmark(item.id));
+              }}
+            >
+              {bookmarks.includes(item.id) ? (
+                <BsBookmarkFill size={28} className="text-[#4A70A9]" />
+              ) : (
+                <BsBookmark size={28} />
+              )}
+            </div>
             <div className="w-[1px] h-6 bg-black"></div>
             <p className="text-[24px] fontEB text-[#4A70A9]">{item.price}</p>
           </div>
