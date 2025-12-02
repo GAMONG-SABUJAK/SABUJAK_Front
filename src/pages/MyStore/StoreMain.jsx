@@ -1,81 +1,54 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FiMapPin } from "react-icons/fi";
 import { IoSettingsOutline, IoDocumentTextOutline } from "react-icons/io5";
 import { BsBookmark } from "react-icons/bs";
+import SalesOverview from "./SalesOverview";
 
 export default function StoreMain() {
   const [weeklyWeather, setWeeklyWeather] = useState([]);
+  const navigate = useNavigate();
 
   const weatherStyles = {
     Clear: {
       icon: "🌤",
       desc: "맑음",
-      bg: "bg-[#FFF4CC]", // 은은한 크림 노랑
+      bg: "bg-[#A9DEF3]",
     },
     Clouds: {
       icon: "☁️",
       desc: "흐림",
-      bg: "bg-[#EEF1F5]", // 연한 그레이블루
+      bg: "bg-[#E6E6E6]",
     },
     Rain: {
       icon: "🌧️",
       desc: "비",
-      bg: "bg-[#E3ECF9]", // 은은한 비블루
+      bg: "bg-[#78A3D1]",
     },
     Drizzle: {
       icon: "🌦️",
       desc: "이슬비",
-      bg: "bg-[#EAF2FB]", // 연한 비+흐림 톤
+      bg: "bg-[#A1BCDA]",
     },
     Thunderstorm: {
       icon: "⛈️",
       desc: "천둥/번개",
-      bg: "bg-[#E8E8F5]", // 회보라 톤
+      bg: "bg-[#8190B4]",
     },
     Snow: {
       icon: "❄️",
       desc: "눈",
-      bg: "bg-[#F2F8FF]", // 파스텔 아이스 블루
-    },
-    Mist: {
-      icon: "🌫️",
-      desc: "안개",
-      bg: "bg-[#F5F5F5]", // 연한 안개 회색
+      bg: "bg-[#F9F9F9]",
     },
     Fog: {
       icon: "🌫️",
       desc: "안개",
-      bg: "bg-[#F5F5F5]",
-    },
-    Haze: {
-      icon: "🌫️",
-      desc: "연무",
-      bg: "bg-[#F7F7F7]", // 아주 옅은 회색
-    },
-    Dust: {
-      icon: "🌪️",
-      desc: "먼지",
-      bg: "bg-[#FFF1E0]", // 연한 먼지 오렌지
+      bg: "bg-[#C1C1C1]",
     },
     Sand: {
       icon: "🌪️",
       desc: "황사",
-      bg: "bg-[#FFEFD6]", // 파스텔 베이지
-    },
-    Smoke: {
-      icon: "🌁",
-      desc: "스모그",
-      bg: "bg-[#ECECEC]", // 탁한 회색 느낌
-    },
-    Squall: {
-      icon: "💨",
-      desc: "돌풍",
-      bg: "bg-[#E8F4F8]", // 바람 느낌 연파랑
-    },
-    Tornado: {
-      icon: "🌪️",
-      desc: "토네이도",
-      bg: "bg-[#F4E6FF]", // 연보라 (강한 기류 느낌)
+      bg: "bg-[#DFCFB5]",
     },
   };
 
@@ -146,9 +119,9 @@ export default function StoreMain() {
   }, []);
 
   return (
-    <div className="pt-12 px-6">
+    <div className="pt-12 px-6 h-screen overflow-hidden">
       {/* profile */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-5">
         <div className="flex">
           <img
             src="/assets/images/Robo/Robo.png"
@@ -169,57 +142,89 @@ export default function StoreMain() {
         <IoSettingsOutline size={28} />
       </div>
 
-      {/* 거래내역 | 관심목록 */}
-      <div className="flex justify-evenly mt-8">
-        <div className="flex flex-col items-center">
-          <IoDocumentTextOutline size={32} />
-          <div className="text-[14px] fontLight">거래내역</div>
-        </div>
-        <div className="w-[0.1px] bg-black" />
-        <div className="flex flex-col items-center">
-          <BsBookmark size={32} />
-          <div className="text-[14px] fontLight">관심목록</div>
-        </div>
-      </div>
-
-      {/* 이번주 날씨 기반 매출 예측 */}
-      <div className="mt-8">
-        <div className="flex items-center justify-between">
-          <div className="fontBold text-[18px] text-black">
-            이번주 날씨 기반 매출 예측
+      <div className="overflow-y-auto h-full pb-[180px]">
+        {/* 거래내역 | 관심목록 */}
+        <div className="flex justify-evenly mt-4">
+          <div
+            className="flex flex-col items-center"
+            onClick={() => navigate("/SalesHistory")}
+          >
+            <IoDocumentTextOutline size={32} />
+            <div className="text-[14px] fontLight mt-1">거래내역</div>
+          </div>
+          <div className="w-[0.1px] bg-black" />
+          <div
+            className="flex flex-col items-center"
+            onClick={() => navigate("/Bookmark")}
+          >
+            <BsBookmark size={32} />
+            <div className="text-[14px] fontLight mt-1">관심목록</div>
           </div>
         </div>
 
-        {/* 날씨 카드 리스트 */}
-        <div className="mt-4 overflow-x-auto">
-          <div className="flex space-x-4 pb-2">
-            {weeklyWeather.map((day, index) => (
-              <div
-                key={index}
-                className={`min-w-[150px] p-4 rounded-lg shadow-md border ${
-                  weatherStyles[day.weather]?.bg
-                }`}
-              >
-                <p className="fontBold text-[16px]">{day.date}</p>
-
-                {/* 🌤 아이콘 + 설명 */}
-                <div className="text-[32px] mt-1">{day.icon}</div>
-                <p className="text-[14px] text-gray-500">{day.desc}</p>
-
-                <div className="text-[14px] mt-2">
-                  <p>최저 {day.min}°C</p>
-                  <p>최고 {day.max}°C</p>
-                </div>
-
-                <div className="mt-3 text-[14px]">
-                  <span className="fontBold text-[#557BB4]">
-                    {day.sales > 0 ? `+${day.sales}%` : `${day.sales}%`}
-                  </span>{" "}
-                  매출예상
-                </div>
-              </div>
-            ))}
+        {/* 이번주 날씨 기반 매출 예측 */}
+        <div className="mt-8">
+          <div className="flex items-center justify-between">
+            <div className="fontBold text-[18px] text-black">
+              이번주 날씨 기반 매출 예측
+            </div>
           </div>
+
+          {/* 날씨 카드 리스트 */}
+          <div className="mt-4 overflow-x-auto">
+            <div className="flex space-x-2 pb-2">
+              {weeklyWeather.map((day, index) => (
+                <div
+                  key={index}
+                  className={`min-w-[100px] h-fit p-2 rounded-xl shadow-md ${
+                    weatherStyles[day.weather]?.bg
+                  }`}
+                >
+                  <div className="flex justify-center items-end space-x-1">
+                    <p className="fontBold text-[15px] text-center">
+                      {day.date}
+                    </p>
+
+                    <p className="text-[12px] fontBold text-[#4E4E4E]">
+                      {day.desc}
+                    </p>
+                  </div>
+
+                  {/* 🌤 아이콘 + 설명 */}
+                  <div className="text-[60px] my-[-10px] flex justify-center">
+                    {day.icon}
+                  </div>
+
+                  <div className="text-[10px] fontBold text-[#4E4E4E] flex justify-center ">
+                    <p>{day.min}°C</p>
+                    <div className="mx-1">/</div>
+                    <p>{day.max}°C</p>
+                  </div>
+
+                  <div className="mt-1 text-[10px] flex justify-center">
+                    <span className="fontBold text-[#557BB4] mr-1">
+                      {day.sales > 0 ? `+${day.sales}%` : `${day.sales}%`}
+                    </span>
+                    매출예상
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* 내 가게 매출 현황 */}
+        <div className="mt-8">
+          <div className="flex items-center justify-between">
+            <div className="fontBold text-[18px] text-black">
+              내 가게 매출 현황
+            </div>
+          </div>
+          <div className="fontLight text-[12px]">
+            영업 종료 후, 오늘의 매출액을 입력해주세요.
+          </div>
+
+          <SalesOverview />
         </div>
       </div>
     </div>

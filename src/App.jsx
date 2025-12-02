@@ -12,6 +12,8 @@ import OutputText from "./pages/Advertise/OutputText";
 import ChatMain from "./pages/Chat/ChatMain";
 import ChatRoom from "./pages/Chat/ChatRoom";
 import StoreMain from "./pages/MyStore/StoreMain";
+import SalesHistory from "./pages/MyStore/SalesHistory/SalesHistory";
+import Bookmark from "./pages/MyStore/Bookmark";
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
           <Route path="/chat" element={<ChatMain />} />
           <Route path="/chat/:roomId" element={<ChatRoom />} />
           <Route path="/store" element={<StoreMain />} />
+          <Route path="/SalesHistory" element={<SalesHistory />} />
+          <Route path="/Bookmark" element={<Bookmark />} />
         </Routes>
         <Menu />
       </div>
