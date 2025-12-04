@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { deals } from "../../data/deals";
+import Header from "../../components/Header";
 
 export default function ChatMain() {
   const chatList = deals.filter((d) => d.chat);
@@ -8,9 +9,7 @@ export default function ChatMain() {
 
   return (
     <div className="pt-12 h-screen overflow-y-auto">
-      <div className="flex justify-between px-6">
-        <p className="text-[20px] fontBold">채팅</p>
-      </div>
+      <Header left={<p className="text-[20px] fontBold">채팅</p>} />
 
       <div className="w-full h-[0.5px] bg-[#c4c4c4] mt-6"></div>
 

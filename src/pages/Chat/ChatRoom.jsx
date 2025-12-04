@@ -1,6 +1,7 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IoChevronBack } from "react-icons/io5";
+import Header from "../../components/Header";
 
 export default function ChatRoom() {
   const { state: chatInfo } = useLocation();
@@ -11,19 +12,18 @@ export default function ChatRoom() {
   return (
     <div className="pt-12 h-screen flex flex-col">
       {/* 헤더 */}
-      <div className="flex items-center px-6 ">
-        <IoChevronBack
-          size={26}
-          onClick={() => navigate(-1)}
-          className="cursor-pointer text-black"
-        />
-
-        <div className="flex items-center ml-4">
-          <p className="fontBold">{chatInfo.chat.name}</p>
-        </div>
-
-        <div className="w-6"></div>
-      </div>
+      <Header
+        left={
+          <div className="flex items-center space-x-3">
+            <IoChevronBack
+              size={26}
+              onClick={() => navigate(-1)}
+              className="cursor-pointer text-black"
+            />
+            <p className="fontBold">{chatInfo.chat.name}</p>
+          </div>
+        }
+      />
 
       <div className="w-full h-[0.5px] bg-[#c4c4c4] mt-4"></div>
 
@@ -52,7 +52,7 @@ export default function ChatRoom() {
       <div className="w-full h-[0.5px] bg-[#c4c4c4]"></div>
 
       {/* 입력창 */}
-      <div className="absolute bottom-[80px] w-full">
+      <div className="absolute bottom-[20px] w-full">
         <div className="p-4 flex space-x-2">
           <input
             className="flex-1 border-[0.1px] p-2 rounded-lg"

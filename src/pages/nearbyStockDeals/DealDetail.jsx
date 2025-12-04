@@ -7,6 +7,7 @@ import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import { getBookmarks, toggleBookmark } from "../../utils/bookmark";
 import { IoChevronBack } from "react-icons/io5";
 import { GoHome, GoHomeFill } from "react-icons/go";
+import Header from "../../components/Header";
 
 export default function DealDetail() {
   const { id } = useParams();
@@ -27,20 +28,24 @@ export default function DealDetail() {
   return (
     <div className="h-screen overflow-y-auto pb-28">
       {/* 상단 뒤로가기 */}
-      <div className="fixed top-5 ml-5 mb-4">
-        <div className="flex">
-          <IoChevronBack
-            size={26}
-            onClick={() => navigate(-1)}
-            className="cursor-pointer text-white"
-          />
-          <GoHomeFill
-            size={26}
-            onClick={() => navigate("/")}
-            className="cursor-pointer ml-3 text-white"
-          />
-        </div>
-      </div>
+      <Header
+        fixed
+        left={
+          <div className="flex">
+            <IoChevronBack
+              size={26}
+              onClick={() => navigate(-1)}
+              className="cursor-pointer text-white"
+            />
+            <GoHomeFill
+              size={26}
+              onClick={() => navigate("/")}
+              className="cursor-pointer ml-3 text-white"
+            />
+          </div>
+        }
+        className="px-5" // 필요 시 패딩 조절
+      />
 
       {/* 상품 이미지 */}
       <img

@@ -12,6 +12,8 @@ import {
   isBookmarked,
 } from "../../utils/bookmark";
 
+import Header from "../../components/Header";
+
 export default function DealMain() {
   const navigate = useNavigate();
   const [bookmarks, setBookmarks] = useState([]);
@@ -35,13 +37,15 @@ export default function DealMain() {
   return (
     <div className="pt-12 h-screen overflow-y-auto">
       {/* header */}
-      <div className="flex justify-between px-6">
-        <div className="flex items-center">
-          <FiMapPin size={20} />
-          <p className="ml-2 text-[16px] fontBold">안양시 만안구</p>
-        </div>
-        <div>검색창</div>
-      </div>
+      <Header
+        left={
+          <>
+            <FiMapPin size={20} />
+            <p className="ml-2 text-[16px] fontBold">안양시 만안구</p>
+          </>
+        }
+        right={<div>검색창</div>}
+      />
 
       <div className="w-full h-[0.5px] bg-[#c4c4c4] mt-6"></div>
 
@@ -119,7 +123,10 @@ export default function DealMain() {
         })}
 
         {/* 오른쪽 아래 글쓰기 버튼 */}
-        <div className="shadow-lg bg-[#4A70A9] w-15 h-15 rounded-full absolute bottom-25 right-10 flex justify-center items-center">
+        <div
+          className="shadow-lg bg-[#4A70A9] w-15 h-15 rounded-full absolute bottom-25 right-10 flex justify-center items-center"
+          onClick={() => navigate("/NewPost")}
+        >
           <FaPlus className="text-white" size={36} />
         </div>
       </div>

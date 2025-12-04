@@ -21,15 +21,18 @@ import SalesHistory from "./pages/MyStore/SalesHistory/SalesHistory";
 import Bookmark from "./pages/MyStore/Bookmark";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import NewPost from "./pages/nearbyStockDeals/NewPost";
 
 function AppContent() {
   const location = useLocation();
 
-  const hideMenuPaths = ["/login", "/signup"];
+  const hideMenuPaths = ["/login", "/signup", "/newpost"];
+  const path = location.pathname.toLowerCase();
 
-  const shouldHideMenu = hideMenuPaths.includes(
-    location.pathname.toLowerCase()
-  );
+  const shouldHideMenu =
+    hideMenuPaths.includes(path) ||
+    path.startsWith("/deals/") ||
+    path.startsWith("/chat/");
 
   return (
     <div className="App relative">
@@ -46,6 +49,7 @@ function AppContent() {
         <Route path="/store" element={<StoreMain />} />
         <Route path="/SalesHistory" element={<SalesHistory />} />
         <Route path="/Bookmark" element={<Bookmark />} />
+        <Route path="/newpost" element={<NewPost />} />
       </Routes>
 
       {!shouldHideMenu && <Menu />}
