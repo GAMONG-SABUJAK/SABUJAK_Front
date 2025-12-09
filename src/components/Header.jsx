@@ -10,7 +10,7 @@ export default function Header({
   return (
     <div
       className={`flex items-center justify-between px-6 ${
-        fixed ? "fixed top-5 left-0 right-0 z-50" : ""
+        fixed ? "fixed top-12 left-0 right-0 z-50" : ""
       } ${className}`}
     >
       <div className="flex items-center">{left}</div>

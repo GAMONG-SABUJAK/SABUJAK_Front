@@ -26,7 +26,7 @@ export default function DealDetail() {
   }
 
   return (
-    <div className="h-screen overflow-y-auto pb-28">
+    <div className="h-screen overflow-y-auto pb-28 ">
       {/* 상단 뒤로가기 */}
       <Header
         fixed
@@ -44,7 +44,7 @@ export default function DealDetail() {
             />
           </div>
         }
-        className="px-5" // 필요 시 패딩 조절
+        className="px-5"
       />
 
       {/* 상품 이미지 */}
