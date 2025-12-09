@@ -3,6 +3,7 @@ import { FiMapPin } from "react-icons/fi";
 import { IoChatboxEllipsesOutline } from "react-icons/io5";
 import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import { FaPlus } from "react-icons/fa6";
+import { IoIosSearch } from "react-icons/io";
 
 import { useNavigate } from "react-router-dom";
 import { deals } from "../../data/deals";
@@ -17,6 +18,7 @@ import Header from "../../components/Header";
 export default function DealMain() {
   const navigate = useNavigate();
   const [bookmarks, setBookmarks] = useState([]);
+  const [search, setSearch] = useState("");
 
   const tagStyles = {
     나눔: "bg-[#E6ECF5] text-[#365482]",
@@ -27,6 +29,15 @@ export default function DealMain() {
   useEffect(() => {
     setBookmarks(getBookmarks());
   }, []);
+
+  const filteredDeals = deals.filter((item) => {
+    const keyword = search.toLowerCase();
+    return (
+      item.title.toLowerCase().includes(keyword) ||
+      item.tag.toLowerCase().includes(keyword) ||
+      item.location.toLowerCase().includes(keyword)
+    );
+  });
 
   const handleBookmark = (e, id) => {
     e.stopPropagation(); // 게시물 클릭 방지
@@ -44,13 +55,24 @@ export default function DealMain() {
             <p className="ml-2 text-[16px] fontBold">안양시 만안구</p>
           </>
         }
-        right={<div>검색창</div>}
+        right={
+          <div className="px-3 py-1 w-40 border-[0.1px] rounded-full text-[14px] flex items-center ">
+            <input
+              type="text"
+              placeholder="원두"
+              value={search}
+              className="outline-none w-31"
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <IoIosSearch className="flex-shrink-0" />
+          </div>
+        }
       />
 
       <div className="w-full h-[0.5px] bg-[#c4c4c4] mt-6"></div>
 
       <div className="px-6">
-        {deals.map((item) => {
+        {filteredDeals.map((item) => {
           const bookmarked = bookmarks.includes(item.id);
           const bookmarkCount = item.bookmarkCount + (bookmarked ? 1 : 0);
 
