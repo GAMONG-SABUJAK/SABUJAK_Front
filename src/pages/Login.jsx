@@ -1,8 +1,38 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import axios from "axios";
+import { API_URL } from "../utils/config";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [loginId, setLoginId] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post(`${API_URL}user/login`, {
+        loginId,
+        password,
+      });
+
+      console.log("로그인성공: ", response.data);
+      const token =
+        response.data.accessToken || response.data.token || response.data.jwt;
+      if (!token) {
+        console.error("응답 구조:", response.data);
+        alert("응답에 JWT 토큰이 없습니다. 응답 구조를 확인해주세요.");
+        return;
+      }
+
+      localStorage.setItem("accessToken", token);
+      console.log("저장된 토큰:", token); // 토큰 확인
+      alert("로그인 성공");
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="h-screen bg-[#7D9FD1]">
       <div className="flex flex-col items-center justify-center h-[40%]">
@@ -20,11 +50,15 @@ export default function Login() {
               type="text"
               className="border-[#c4c4c4] border-[0.1px] w-full rounded-full shadow-md py-1.5 px-5 text-[#c4c4c4] fontLight"
               placeholder="아이디"
+              value={loginId}
+              onChange={(e) => setLoginId(e.target.value)}
             />
             <input
               type="password"
               className="border-[#c4c4c4] border-[0.1px] w-full rounded-full shadow-md py-1.5 px-5 text-[#c4c4c4] fontLight"
               placeholder="비밀번호"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <div className="flex space-x-2 justify-end">
               <div
@@ -34,7 +68,7 @@ export default function Login() {
                 회원가입
               </div>
               <div
-                onClick={() => navigate("/")}
+                onClick={handleLogin}
                 className="bg-[#7D9FD1] w-fit px-4 py-1.5 rounded-full shadow-md text-white fontMedium text-[14px]"
               >
                 로그인

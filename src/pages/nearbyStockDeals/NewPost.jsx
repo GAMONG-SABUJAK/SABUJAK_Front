@@ -3,25 +3,32 @@ import { IoChevronBack } from "react-icons/io5";
 import Header from "../../components/Header";
 import { IoCameraOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { API_URL } from "../../utils/config";
 
 export default function NewPost() {
-  const [images, setImages] = useState([]);
-  const [selectedTag, setSelectedTag] = useState(null);
-  const [price, setPrice] = useState("");
-
-  const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
+
+  const [title, setTitle] = useState("");
+  const [itemName, setItemName] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
+  const [selectedTag, setSelectedTag] = useState(null);
+  const [images, setImages] = useState([]);
+  const [files, setFiles] = useState([]);
 
   const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files);
+    const selectedFiles = Array.from(e.target.files);
 
-    if (images.length + files.length > 5) {
+    if (images.length + selectedFiles.length > 5) {
       alert("사진은 최대 5장까지 업로드할 수 있어요!");
       return;
     }
 
-    const newImageUrls = files.map((file) => URL.createObjectURL(file));
-    setImages((prev) => [...prev, ...newImageUrls]);
+    const previewUrls = selectedFiles.map((file) => URL.createObjectURL(file));
+    setImages((prev) => [...prev, ...previewUrls]); // 미리보기
+    setFiles((prev) => [...prev, ...selectedFiles]); // 실제 파일
   };
 
   const tagStyles = {
@@ -31,10 +38,131 @@ export default function NewPost() {
   };
 
   const handlePriceChange = (e) => {
-    let value = e.target.value;
-    value = value.replace(/[^0-9]/g, "");
+    let value = e.target.value.replace(/[^0-9]/g, "");
     const formatted = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     setPrice(formatted);
+  };
+
+  // presigned url 요청
+  const getPresignedUrls = async (files) => {
+    const token = localStorage.getItem("accessToken");
+
+    const presignedReqList = files.map((file, index) => {
+      return {
+        fileName: file.name,
+        mimeType: file.type,
+      };
+    });
+
+    try {
+      const res = await axios.post(
+        `${API_URL}s3/presigned-urls`,
+        presignedReqList,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      return res.data;
+    } catch (err) {
+      console.error("에러:", err);
+      throw err;
+    }
+  };
+
+  // s3 업로드
+  const uploadToS3 = async (files, presignedUrls) => {
+    const imageUrls = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const { presignedUrl, cdnUrl } = presignedUrls[i];
+
+      await axios.put(presignedUrl, file, {
+        headers: {
+          "Content-Type": file.type,
+        },
+      });
+
+      imageUrls.push(cdnUrl);
+    }
+
+    return imageUrls;
+  };
+
+  // item-trade/create
+  const createPost = async (itemImageList) => {
+    const token = localStorage.getItem("accessToken");
+
+    const payload = {
+      itemImage: itemImageList,
+      hashTag:
+        selectedTag === "나눔"
+          ? "FREE"
+          : selectedTag === "구해요"
+          ? "WANTED"
+          : "FOR_SALE",
+      itemName,
+      title,
+      description,
+      price: Number(price.replace(/,/g, "")),
+    };
+
+    const res = await axios.post(`${API_URL}item-trade/create`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return res.data;
+  };
+
+  const handleSubmit = async () => {
+    try {
+      if (!selectedTag) return alert("태그를 선택해주세요.");
+      if (!title.trim()) return alert("제목을 입력해주세요.");
+      if (!itemName.trim()) return alert("제품명을 입력해주세요.");
+      if (!description.trim()) return alert("설명을 입력해주세요.");
+      if (!price) return alert("가격을 입력해주세요.");
+      if (files.length === 0) return alert("사진을 최소 1장 업로드해주세요.");
+
+      // 1) presigned URL 요청
+      const presignedUrls = await getPresignedUrls(files);
+
+      if (!presignedUrls || presignedUrls.length === 0) {
+        throw new Error("presigned URL을 받아오지 못했습니다.");
+      }
+
+      // 2) S3 업로드
+      await uploadToS3(files, presignedUrls);
+
+      // 3) 아이템이미지 JSON 배열 생성
+      const itemImageList = files.map((file, index) => {
+        const p = presignedUrls[index];
+        return {
+          fileName: file.name,
+          fileType: file.type,
+          fileSize: file.size,
+          fileUrl: p.cdnUrl,
+          fileKey: p.key,
+        };
+      });
+
+      // 4) 게시글 생성 API 호출
+      await createPost(itemImageList);
+
+      alert("게시글이 성공적으로 등록되었습니다.");
+      navigate(-1);
+    } catch (err) {
+      console.error("게시글 등록 에러:", err);
+      if (err.response?.status !== 401) {
+        alert("게시글 등록에 실패했습니다. 다시 시도해주세요.");
+      }
+    }
   };
 
   return (
@@ -76,14 +204,12 @@ export default function NewPost() {
 
             {/* 선택된 사진 프리뷰 */}
             {images.map((img, index) => (
-              // <div key={index}>
               <img
                 key={index}
                 src={img}
                 alt="preview"
                 className="w-18 h-18 object-cover rounded-lg flex-shrink-0 border-[0.1px]"
               />
-              // </div>
             ))}
           </div>
         </div>
@@ -95,6 +221,8 @@ export default function NewPost() {
             type="text"
             placeholder="제목을 입력해주세요."
             className="border-[0.1px] w-full px-3 py-1 rounded-md text-[#6a6a6a] text-[16px] fontLight "
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
           />
         </div>
 
@@ -125,6 +253,8 @@ export default function NewPost() {
             type="text"
             placeholder="제품명을 정확히 작성해주세요."
             className="border-[0.1px] w-full px-3 py-1 rounded-md text-[#6a6a6a] text-[16px] fontLight "
+            value={itemName}
+            onChange={(e) => setItemName(e.target.value)}
           />
         </div>
 
@@ -132,10 +262,10 @@ export default function NewPost() {
         <div className="space-y-2">
           <p className="fontSB text-[18px]">자세한 설명</p>
           <textarea
-            name=""
-            id=""
             className="border-[0.1px] h-24 w-full px-3 py-1 rounded-md text-[#6a6a6a] text-[16px] fontLight "
             placeholder="신뢰할 수 있는 거래를 위해 자세히 적어주세요."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
           ></textarea>
         </div>
 
@@ -157,7 +287,10 @@ export default function NewPost() {
 
       {/* 버튼 */}
       <div className="fixed bottom-0 left-0 w-full px-6 pb-6">
-        <div className="bg-[#4A70A9] py-3 text-white fontBold text-center rounded-lg shadow-2xl">
+        <div
+          onClick={handleSubmit}
+          className="bg-[#4A70A9] py-3 text-white fontBold text-center rounded-lg shadow-2xl"
+        >
           게시글 올리기
         </div>
       </div>

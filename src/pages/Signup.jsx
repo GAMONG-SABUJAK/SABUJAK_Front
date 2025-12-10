@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { API_URL } from "../utils/config";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -39,6 +41,21 @@ export default function Signup() {
       alert("사업자 정보 조회 완료!");
     } else {
       alert("등록되지 않은 사업자번호입니다 (임시)");
+    }
+  };
+
+  const handleSignup = async () => {
+    try {
+      const payload = {
+        ...form,
+        businessNum: Number(form.businessNum),
+      };
+
+      const res = await axios.post(`${API_URL}user/signup`, payload);
+      alert(res.data);
+      navigate("/login");
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -145,7 +162,7 @@ export default function Signup() {
           {/* 가입 버튼 */}
           <div className="flex justify-end mt-16">
             <button
-              onClick={() => navigate("/login")}
+              onClick={handleSignup}
               className="bg-[#7D9FD1] py-1 px-4 rounded-full text-white fontBold text-[17px]"
             >
               가입하기

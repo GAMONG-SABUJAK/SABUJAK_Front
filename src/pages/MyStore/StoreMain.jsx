@@ -131,7 +131,7 @@ export default function StoreMain() {
           <div className="flex flex-col justify-center ml-3">
             <div className="flex items-center">
               <p className="fontBold text-[20px]">사부작</p>
-              <p className="ml-2 text-[#6F6F6F]">#1234</p>
+              {/* <p className="ml-2 text-[#6F6F6F]">#1234</p> */}
             </div>
             <div className="flex items-center text-[#6F6F6F]">
               <FiMapPin size={12} />
